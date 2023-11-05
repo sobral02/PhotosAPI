@@ -24,6 +24,9 @@ import kotlinx.coroutines.launch
 import com.example.marsphotos.network.MarsApi
 import com.example.marsphotos.network.MarsPhoto
 import java.io.IOException
+import com.google.firebase.database.*
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 
 sealed interface MarsUiState {
     data class Success(val photos: String, val randomPhoto : MarsPhoto, var listphotos : List<MarsPhoto>) : MarsUiState
@@ -32,7 +35,6 @@ sealed interface MarsUiState {
 }
 
 class MarsViewModel : ViewModel() {
-    /** The mutable State that stores the status of the most recent request */
     var marsUiState: MarsUiState by mutableStateOf(MarsUiState.Loading)
         private set
 

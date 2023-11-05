@@ -20,14 +20,15 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.serialization") version "1.8.10"
+    id("com.google.gms.google-services")
 }
 
 android {
-    namespace = "com.example.marsphotos"
+    namespace = "com.google.marsphotos"
     compileSdk = 33
 
     defaultConfig {
-        applicationId = "com.example.marsphotos"
+        applicationId = "com.google.marsphotos"
         minSdk = 24
         targetSdk = 33
         versionCode = 1
@@ -69,6 +70,12 @@ android {
 }
 
 dependencies {
+
+    implementation(platform("com.google.firebase:firebase-bom:32.4.0"))
+    implementation("com.google.firebase:firebase-database-ktx")
+
+
+
 
     // Retrofit
     implementation("com.squareup.retrofit2:retrofit:2.9.0")

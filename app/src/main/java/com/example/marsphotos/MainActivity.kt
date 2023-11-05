@@ -26,11 +26,15 @@ import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import com.example.marsphotos.ui.MarsPhotosApp
 import com.example.marsphotos.ui.theme.MarsPhotosTheme
+import com.google.firebase.database.FirebaseDatabase
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
+
+        // Inicialize o Firebase (certifique-se de que o google-services.json esteja no diretório correto)
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true)
         setContent {
             MarsPhotosTheme {
                 // A surface container using the 'background' color from the theme
