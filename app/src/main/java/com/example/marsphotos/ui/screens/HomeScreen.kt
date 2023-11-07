@@ -16,7 +16,8 @@
 package com.example.marsphotos.ui.screens
 
 import PicsumUiState
-
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -31,7 +32,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.material3.Button
@@ -42,6 +42,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.example.marsphotos.camera.CameraActivity
+import com.example.marsphotos.camera.CapturedImageActivity
+import com.example.marsphotos.camera.ImageUriHolder
 import com.example.marsphotos.firebase.incrementRollCount
 import com.example.marsphotos.firebase.loadLastSavedPhotos
 import com.example.marsphotos.firebase.resetRollValue
@@ -69,6 +72,7 @@ fun HomeScreen(
             picsumphotos =picsumUiState.photos ,
             randomPicsumPhoto = picsumUiState.randomPhoto,
             listPicsumPhotos = picsumUiState.listphotos,
+
         )
     }
     else{
@@ -99,35 +103,6 @@ fun ErrorScreen(modifier: Modifier = Modifier) {
     }
 }
 
-/**
- * ResultScreen displaying number of photos retrieved.
- */
-@Composable
-fun ResultScreen(photos: String, randomPhoto: MarsPhoto, modifier: Modifier = Modifier) {
-    Column(modifier = modifier.fillMaxWidth()){
-        Text(text = photos)
-        AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(randomPhoto.imgSrc) .crossfade(true) .build(),
-            contentDescription = "A photo",
-        )
-    }
-}
-
-/**
- * ResultScreen displaying number of photos retrieved.
- */
-@Composable
-fun ResultScreen2(photos: String, randomPhoto: PicsumPhoto, modifier: Modifier = Modifier) {
-    Column(modifier = modifier.fillMaxWidth()){
-        Text(text = photos)
-        AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(randomPhoto.imgSrc) .crossfade(true) .build(),
-            contentDescription = "A photo",
-        )
-    }
-}
 
 @Composable
 fun ResultScreen3(marsphotos: String,
@@ -140,6 +115,10 @@ fun ResultScreen3(marsphotos: String,
     var currentRandomMarsPhoto by remember { mutableStateOf(randomMarsPhoto) }
     var currentRandomPicsumPhoto by remember { mutableStateOf(randomPicsumPhoto) }
     var rollCount by remember { mutableStateOf(0L) }
+
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
+    val context = LocalContext.current
+
 
     Column( modifier = Modifier.fillMaxWidth()
     ) {
@@ -163,7 +142,6 @@ fun ResultScreen3(marsphotos: String,
 
         )
 
-        // Agora você pode usar rollCount no seu compositor
         Text("Roll Count: $rollCount")
 
         Row{
@@ -173,52 +151,68 @@ fun ResultScreen3(marsphotos: String,
                 incrementRollCount {count ->
                         rollCount = count
                 }
-            }) {
+            },
+                modifier = Modifier.weight(1f)
+            ) {
                 Text("Roll")
             }
 
 
             Button(onClick = {
-                // Use a função saveCurrentPhotos do FirebaseDataManager
                 saveCurrentPhotos(
                     marsPhotoName = currentRandomMarsPhoto.id,
                     marsPhotoURL = currentRandomMarsPhoto.imgSrc,
                     picsumPhotoName = currentRandomPicsumPhoto.id,
                     picsumPhotoURL = currentRandomPicsumPhoto.imgSrc
                 )
-            }) {
+            },
+                modifier = Modifier.weight(1f)
+            ) {
                 Text("Save Photo")
             }
 
 
             Button(onClick = {
-                // Use a função loadLastSavedPhotos do FirebaseDataManager
                 loadLastSavedPhotos { savedPhotos ->
                     currentRandomMarsPhoto = MarsPhoto(savedPhotos.marsPhotoName,savedPhotos.marsPhotoURL)
                     currentRandomPicsumPhoto = PicsumPhoto(savedPhotos.picsumPhotoName,savedPhotos.picsumPhotoURL)
 
                 }
-            }) {
+            },
+                modifier = Modifier.weight(1f)
+            ) {
                 Text("Load Photos")
-            }
-
-            Button(onClick = {
-                // Use a função loadLastSavedPhotos do FirebaseDataManager
-                loadLastSavedPhotos { savedPhotos ->
-                    currentRandomMarsPhoto = MarsPhoto(savedPhotos.marsPhotoName,savedPhotos.marsPhotoURL)
-                    currentRandomPicsumPhoto = PicsumPhoto(savedPhotos.picsumPhotoName,savedPhotos.picsumPhotoURL)
-
-                }
-            }) {
-                Text("Take Photo")
             }
 
 
 
         }
 
+        Row {
+            Button(onClick = {
+                val intent = Intent(context, CameraActivity::class.java)
+                context.startActivity(intent)
+            },
+                modifier = Modifier.weight(1f)
+            ) {
+                Text("Take Photo")
+            }
 
 
+            Button(onClick = {
+                imageUri = ImageUriHolder.imageUri
+                if(imageUri != null) {
+                    val intent = Intent(context, CapturedImageActivity::class.java)
+                    intent.putExtra("imageUri", imageUri.toString())
+                    context.startActivity(intent)
+                }
+
+            },
+                modifier = Modifier.weight(1f)
+            ) {
+                Text("Display Photo Taken")
+            }
+        }
 
     }
 }

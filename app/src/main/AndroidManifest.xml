@@ -16,7 +16,13 @@
   -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-    <uses-permission android:name="android.permission.INTERNET" />
+
+    <uses-feature android:name="android.hardware.camera.any" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
+
 
     <application
         android:allowBackup="true"
@@ -36,5 +42,24 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Adicione outras atividades aqui -->
+        <activity
+            android:name="com.example.marsphotos.camera.CameraActivity"
+            android:label="Camera Activity"
+            android:theme="@style/AppTheme">
+            <!-- Configure os filtros de intent, se necessário -->
+        </activity>
+
+        <activity
+            android:name="com.example.marsphotos.camera.CapturedImageActivity"
+            android:label="Captured Image Activity"
+            android:theme="@style/AppTheme">
+            <!-- Configure os filtros de intent, se necessário -->
+        </activity>
+
+
+
+
     </application>
 </manifest>
